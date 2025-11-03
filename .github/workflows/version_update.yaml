@@ -31,3 +31,14 @@ jobs:
                   git add versions.json
                   git diff --cached --quiet || git commit -m "Update versions.json"
                   git push origin HEAD
+
+            - name: Keep workflow active
+              run: |
+                  git fetch origin main
+                  if [ "$(git rev-parse HEAD)" = "$(git rev-parse origin/main)" ]; then
+                      echo "No new commit was created, creating an empty commit to keep active"
+                      git config --local user.email "action@github.com"
+                      git config --local user.name "GitHub Action"
+                      git commit --allow-empty -m "chore: keep workflow active"
+                      git push origin main
+                  fi
